@@ -28,5 +28,16 @@ def creatUser(request, payload: UserIn):
     #user.first_name = payload.name
     #user.last_name = payload.lastname
     user.save()
-#@api.auth("/auth/register"
+
+#return token + user summary
+@api.post("/auth/register/")
+def auth(request, payload: UserIn):
+    user = User.objects.create_user(
+        username=payload.name,
+        email=payload.email,
+        password=payload.password,
+    )
+    user.save()
+
+
 

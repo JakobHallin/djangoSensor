@@ -19,8 +19,14 @@ from django.urls import path
 #from api.api import router as api_router
 from api.api import api
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 #api.add_router("/api/", api)
 
 urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path("api/", api.urls),
 ]
