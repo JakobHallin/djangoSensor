@@ -16,7 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+#from api.api import router as api_router
+from api.api import api
+
+#api.add_router("/api/", api)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("api/", api.urls),
 ]
