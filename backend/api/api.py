@@ -7,7 +7,7 @@ api = NinjaAPI()
 
 class UserIn(Schema):
     name: str
-    lastname: str
+    #lastname: str
     email: str
     password: str
 
@@ -25,6 +25,8 @@ def creatUser(request, payload: UserIn):
         email=payload.email,
         password=payload.password,
     )
-    user.first_name = payload.name
-    user.last_name = payload.lastname
+    #user.first_name = payload.name
+    #user.last_name = payload.lastname
     user.save()
+#@api.auth("/auth/register"
+
