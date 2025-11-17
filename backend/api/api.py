@@ -137,34 +137,44 @@ class JWTAuth(HttpBearer):
 #- `description` (optional)
 #- `model`
 class Sensor(models.Model):
-    owner=models.CharField(max_length=128)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sensors")
     name=models.CharField(max_length=128)
+    description = models.TextField(blank=True, null=True)
     model=models.CharField(max_length=128)
 
 class SensorIn(Schema):
     name: str
     model: str
 
-@api.get("/sensor", auth=JWTAuth())
+@api.get("/sensors", auth=JWTAuth())
 def getSensor(request):
+    sensors = Sensor.objects.filter(owner=request.auth)
     sensor = Sensor.objects.values()
     return list(sensor)
-@api.post("/sensor", auth=JWTAuth())
+@api.post("/sensors", auth=JWTAuth())
 def createSensor(request, payload: SensorIn):
-    sensor = Sensor.objects.create()
+    sensor = Sensor.objects.create(owner=request.auth)
     sensor.name = payload.name
     sensor.model = payload.model
     sensor.save()
 #https://django-ninja.dev/guides/input/path-params/
-@api.delete("/sensor/{sensor_id}", auth=JWTAuth())
+@api.delete("/sensors/{sensor_id}", auth=JWTAuth())
 def deleteSensor(request, sensor_id: int):
     #kanske borde göra try and catch
     try:
-        sensor = Sensor.objects.get(id=sensor_id)
+        sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
     except Sensor.DoesNotExist:
         raise Http404("Sensor not found")
     sensor.delete()
     return {"success": True, "message": "Sensor deleted"}
+
+@api.get("/sensors/{sensor_id}", auth=JWTAuth())
+def getSensorWithID(request, sensor_id: int):
+    sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
+    return sensor
+
+
+
 
 @api.get("/health")
 def health(request):
