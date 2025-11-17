@@ -6,6 +6,7 @@ from ninja import Schema
 from django.urls import path, include
 from ninja import Router
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from django.db import models
 api = NinjaAPI()
 #router = Router()
 #auth_router = Router()
@@ -111,6 +112,21 @@ def auth(request, payload: UserIn):
 
 
 api.add_router("/auth", auth_router)
+
+
+
+#sensor
+# id
+#- `owner`
+#- `name`
+#- `description` (optional)
+#- `model`
+class Sensor(models.Model):
+    owner=models.CharField(max_length=128)
+    name=models.CharField(max_length=128)
+    model=models.CharField(max_length=128)
+
+
 
 @api.get("/health")
 def health(request):
