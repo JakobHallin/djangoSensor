@@ -7,6 +7,9 @@ from django.urls import path, include
 from ninja import Router
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from django.db import models
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from ninja.security import HttpBearer
+from django.http import Http404
 api = NinjaAPI()
 #router = Router()
 #auth_router = Router()
@@ -115,6 +118,18 @@ api.add_router("/auth", auth_router)
 
 
 
+class JWTAuth(HttpBearer):
+    def authenticate(self, request, token: str):
+        jwt_auth = JWTAuthentication()
+        try:
+            validated_token = jwt_auth.get_validated_token(token)
+            user = jwt_auth.get_user(validated_token)
+            return user
+        except Exception:
+            # Any error authentication fails
+            return None
+
+
 #sensor
 # id
 #- `owner`
@@ -130,17 +145,26 @@ class SensorIn(Schema):
     name: str
     model: str
 
-@api.get("/sensor")
+@api.get("/sensor", auth=JWTAuth())
 def getSensor(request):
     sensor = Sensor.objects.values()
     return list(sensor)
-@api.post("/sensor")
+@api.post("/sensor", auth=JWTAuth())
 def createSensor(request, payload: SensorIn):
     sensor = Sensor.objects.create()
     sensor.name = payload.name
     sensor.model = payload.model
     sensor.save()
-
+#https://django-ninja.dev/guides/input/path-params/
+@api.delete("/sensor/{sensor_id}", auth=JWTAuth())
+def deleteSensor(request, sensor_id: int):
+    #kanske borde göra try and catch
+    try:
+        sensor = Sensor.objects.get(id=sensor_id)
+    except Sensor.DoesNotExist:
+        raise Http404("Sensor not found")
+    sensor.delete()
+    return {"success": True, "message": "Sensor deleted"}
 
 @api.get("/health")
 def health(request):
