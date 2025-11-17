@@ -126,6 +126,20 @@ class Sensor(models.Model):
     name=models.CharField(max_length=128)
     model=models.CharField(max_length=128)
 
+class SensorIn(Schema):
+    name: str
+    model: str
+
+@api.get("/sensor")
+def getSensor(request):
+    sensor = Sensor.objects.values()
+    return list(sensor)
+@api.post("/sensor")
+def createSensor(request, payload: SensorIn):
+    sensor = Sensor.objects.create()
+    sensor.name = payload.name
+    sensor.model = payload.model
+    sensor.save()
 
 
 @api.get("/health")
@@ -136,7 +150,7 @@ def getUser(request):
 	users = User.objects.values()
 	return list(users)
 @api.post("/createUser")
-def creatUser(request, payload: UserIn):
+def createUser(request, payload: UserIn):
     user = User.objects.create_user(
         username=payload.name,
         email=payload.email,
