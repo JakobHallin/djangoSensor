@@ -151,6 +151,7 @@ class Sensor(models.Model):
 class SensorIn(Schema):
     name: str
     model: str
+    description: str | None = None
 
 class SensorOut(Schema):
     id: int
@@ -159,17 +160,17 @@ class SensorOut(Schema):
     description: str | None = None
 
 
-@api.get("/sensors", auth=JWTAuth())
+@api.get("/sensors", auth=JWTAuth(), response=list[SensorOut])
 def getSensor(request):
     sensors = Sensor.objects.filter(owner=request.auth)
-    sensor = Sensor.objects.values()
-    return list(sensor)
-@api.post("/sensors", auth=JWTAuth())
+    return list(sensors)
+@api.post("/sensors", auth=JWTAuth(), response=SensorOut)
 def createSensor(request, payload: SensorIn):
     sensor = Sensor.objects.create(owner=request.auth)
     sensor.name = payload.name
     sensor.model = payload.model
     sensor.save()
+    return sensor
 #https://django-ninja.dev/guides/input/path-params/
 @api.delete("/sensors/{sensor_id}", auth=JWTAuth())
 def deleteSensor(request, sensor_id: int):
@@ -215,13 +216,18 @@ class Readings(models.Model):
 class ReadingIn(Schema):
     temperature: float
     humidity: float
+class ReadingOut(Schema):
+    id: int
+    temperature: float
+    humidity: float
+    timestamp: datetime.datetime
 
-@api.get("/sensors/{sensor_id}/readings")
+@api.get("/sensors/{sensor_id}/readings", auth=JWTAuth(), response=list[ReadingOut])
 def getReadings(request, sensor_id: int):
     readings = Readings.objects.filter(sensor=sensor_id)
-    reading = Readings.objects.values()
-    return list(reading)
-@api.post("/sensors/{sensor_id}/readings", auth=JWTAuth())
+    #reading = Readings.objects.values()
+    return list(readings)
+@api.post("/sensors/{sensor_id}/readings", auth=JWTAuth(), response= ReadingOut)
 def creatReadings(request, sensor_id: int, payload: ReadingIn):
     #check if its the right owner
     sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
@@ -230,7 +236,7 @@ def creatReadings(request, sensor_id: int, payload: ReadingIn):
     reading.humidity = payload.humidity
     reading.timestamp = datetime.datetime.utcnow() #get the curent time
     reading.save()
-    return
+    return reading
 
 
 @api.get("/readings")
