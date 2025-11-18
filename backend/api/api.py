@@ -32,6 +32,11 @@ class UserIn(Schema):
     password: str
 
 
+class SensorUpdate(Schema):
+    name: str
+    model: str
+    description: str | None = None
+
 class LoginIn(Schema):
     email: str
     password: str
