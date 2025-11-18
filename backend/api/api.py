@@ -146,6 +146,18 @@ class SensorIn(Schema):
     name: str
     model: str
 
+class SensorUpdate(Schema):
+    name: str
+    model: str
+    description: str | None = None
+
+class SensorOut(Schema):
+    id: int
+    name: str
+    model: str
+    description: str | None = None
+
+
 @api.get("/sensors", auth=JWTAuth())
 def getSensor(request):
     sensors = Sensor.objects.filter(owner=request.auth)
@@ -173,6 +185,15 @@ def getSensorWithID(request, sensor_id: int):
     sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
     return sensor
 
+@api.put("/sensors/{sensor_id}", auth=JWTAuth(), response=SensorOut)
+def changeSensorWithID(request, sensor_id: int, payload: SensorUpdate):
+    sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
+    sensor.name = payload.name
+    sensor.model = payload.model
+    sensor.description = getattr(payload, "description", None)
+    sensor.save()
+    #sensorOut= SensorOut
+    return sensor
 
 
 
