@@ -10,6 +10,7 @@ from django.db import models
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from ninja.security import HttpBearer
 from django.http import Http404
+import datetime
 api = NinjaAPI()
 #router = Router()
 #auth_router = Router()
@@ -211,12 +212,33 @@ class Readings(models.Model):
     temperature = models.FloatField() #float?
     humidity = models.FloatField()  #float?
     timestamp = models.DateTimeField()  #date?
+class ReadingIn(Schema):
+    temperature: float
+    humidity: float
+
 @api.get("/sensors/{sensor_id}/readings")
-def getReadings(request):
+def getReadings(request, sensor_id: int):
+    readings = Readings.objects.filter(sensor=sensor_id)
+    reading = Readings.objects.values()
+    return list(reading)
+@api.post("/sensors/{sensor_id}/readings", auth=JWTAuth())
+def creatReadings(request, sensor_id: int, payload: ReadingIn):
+    #check if its the right owner
+    sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
+    reading = Readings(sensor=sensor)
+    reading.temperature = payload.temperature
+    reading.humidity = payload.humidity
+    reading.timestamp = datetime.datetime.utcnow() #get the curent time
+    reading.save()
     return
-@api.post("/sensors/{sensor_id}/readings")
-def creatReadings(request):
-    return
+
+
+@api.get("/readings")
+def getReaders(request):
+        readings = Readings.objects.values()
+        return list(readings)
+@api.post("/createUser")
+
 
 @api.get("/health")
 def health(request):
