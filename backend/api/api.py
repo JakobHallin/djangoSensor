@@ -146,11 +146,6 @@ class SensorIn(Schema):
     name: str
     model: str
 
-class SensorUpdate(Schema):
-    name: str
-    model: str
-    description: str | None = None
-
 class SensorOut(Schema):
     id: int
     name: str
@@ -180,7 +175,7 @@ def deleteSensor(request, sensor_id: int):
     sensor.delete()
     return {"success": True, "message": "Sensor deleted"}
 
-@api.get("/sensors/{sensor_id}", auth=JWTAuth())
+@api.get("/sensors/{sensor_id}", auth=JWTAuth(), response=SensorOut)
 def getSensorWithID(request, sensor_id: int):
     sensor = Sensor.objects.get(id=sensor_id, owner=request.auth)
     return sensor
