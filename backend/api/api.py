@@ -196,6 +196,27 @@ def changeSensorWithID(request, sensor_id: int, payload: SensorUpdate):
     return sensor
 
 
+### Readings
+
+#- `id`
+#- `sensor`
+#- `temperature`
+#- `humidity`
+#- `timestamp`
+#- `GET /api/sensors/{sensor_id}/readings/` — list readings for a sensor. Filters:  `timestamp_from`, `timestamp_to`.
+#- `POST /api/sensors/{sensors_id}/readings/` — create. Body:
+
+class Readings(models.Model):
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    temperature = models.FloatField() #float?
+    humidity = models.FloatField()  #float?
+    timestamp = models.DateTimeField()  #date?
+@api.get("/sensors/{sensor_id}/readings")
+def getReadings(request):
+    return
+@api.post("/sensors/{sensor_id}/readings")
+def creatReadings(request):
+    return
 
 @api.get("/health")
 def health(request):
