@@ -240,35 +240,6 @@ def creatReadings(request, sensor_id: int, payload: ReadingIn):
     return reading
 
 
-@api.get("/readings")
-def getReaders(request):
-        readings = Readings.objects.values()
-        return list(readings)
-@api.post("/createUser")
-
-
 @api.get("/health")
 def health(request):
     return {"status": "ok"}
-@api.get("/users")
-def getUser(request):
-	users = User.objects.values()
-	return list(users)
-@api.post("/createUser")
-def createUser(request, payload: UserIn):
-    user = User.objects.create_user(
-        username=payload.name,
-        email=payload.email,
-        password=payload.password,
-    )
-    #user.first_name = payload.name
-    #user.last_name = payload.lastname
-    user.save()
-    return {
-        "id": user.id,
-        "email": user.email,
-        "username": user.username,
-    }
-
-
-
