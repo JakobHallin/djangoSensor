@@ -75,12 +75,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
+    "default": { #should use .env not store this in plain text
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "mydb",
         "USER": "myuser",
-        "PASSWORD": "mypass",
-        "HOST": "localhost",  # because Django is running on your machine
+        "PASSWORD": "mypass", 
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
