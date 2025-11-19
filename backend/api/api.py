@@ -11,6 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from ninja.security import HttpBearer
 from django.http import Http404
 import datetime
+from rest_framework.exceptions import AuthenticationFailed
 api = NinjaAPI()
 #router = Router()
 #auth_router = Router()
