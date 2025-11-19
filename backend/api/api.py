@@ -170,6 +170,7 @@ def createSensor(request, payload: SensorIn):
     sensor = Sensor.objects.create(owner=request.auth)
     sensor.name = payload.name
     sensor.model = payload.model
+    sensor.description = getattr(payload, "description", None)
     sensor.save()
     return sensor
 #https://django-ninja.dev/guides/input/path-params/
