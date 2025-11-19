@@ -37,6 +37,12 @@ http://localhost:8000/
 ```
 python -m pytest -v
 ```
+## Implemented tests
+Did not have time to implement all the tests 
+* implemented api/test_auth.py
+* create sensor api/test_sensor.py
+
+I missed tests for Sensor and for Readings.
 ## API documentation 
 ```
 127.0.0.1:8000/api/docs
@@ -45,6 +51,8 @@ http://localhost:8000/api/docs
 ## API endpoints
 
 All endpoints are prefixed with `/api`.
+
+I did not have time to implement pagination or date-range filters for readings.
 
 ### Auth (no refresh token)
 
