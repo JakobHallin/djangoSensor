@@ -13,16 +13,6 @@ from django.http import Http404
 import datetime
 from rest_framework.exceptions import AuthenticationFailed
 api = NinjaAPI()
-#router = Router()
-#auth_router = Router()
-#auth_urls = [
- #   path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-  #  path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-#]
-#api.add_router("/auth", include((auth_urls, "auth"), namespace="auth"))
-
-
-
 
 
 auth_router = Router(tags=["auth"])
@@ -138,11 +128,6 @@ class JWTAuth(HttpBearer):
 
 
 #sensor
-# id
-#- `owner`
-#- `name`
-#- `description` (optional)
-#- `model`
 class Sensor(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sensors")
     name=models.CharField(max_length=128)
@@ -200,16 +185,7 @@ def changeSensorWithID(request, sensor_id: int, payload: SensorUpdate):
     return sensor
 
 
-### Readings
-
-#- `id`
-#- `sensor`
-#- `temperature`
-#- `humidity`
-#- `timestamp`
-#- `GET /api/sensors/{sensor_id}/readings/` — list readings for a sensor. Filters:  `timestamp_from`, `timestamp_to`.
-#- `POST /api/sensors/{sensors_id}/readings/` — create. Body:
-
+# Readings
 class Readings(models.Model):
     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
     temperature = models.FloatField() #float?
